@@ -2,19 +2,19 @@ const express = require('express')
 const app = express()
 const PORT = process.env.PORT || 8080
 const db = require('sqlite')
+const moment = require('moment')
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 
-let date = new Date()
-let dd = date.getDate()
-let mm = date.getMonth() + 1
-let yyyy = date.getFullYear()
-let strDate = `${dd}-${mm}-${yyyy}`
+let strDate = moment().format('l')
 
 app.set('views', './views')
 app.set('view engine', 'pug')
 
 db.open('todolist.db').then(() => {
   console.log('Database Ready')
-  return db.run('CREATE TABLE IF NOT EXISTS todos (message, completion, createdAt, updatedAt)')
+  return db.run('CREATE TABLE IF NOT EXISTS todos (message, completion, createdAt, updatedAt, userId)')
+  return db.run('CREATE TABLE IF NOT EXISTS users (firstname, lastname, username, password, email, createdAt, updatedAt)')
 }).then(() => {
   console.log('Tables Ready')
 }).catch(() => {
@@ -33,11 +33,11 @@ app.use(express.urlencoded({
 
 app.get('/', (req, res) => {
   console.log('-> ALL /')
-  res.redirect('/todos')
+  res.redirect('/ressources')
 })
 
-app.get('/todos', (req, res) => {
-  console.log('-> GET /todos')
+app.get('/ressources', (req, res) => {
+  console.log('-> GET /ressources')
   console.log('Database Open')
   res.format({
     'text/html': function() {
@@ -56,10 +56,10 @@ app.get('/todos', (req, res) => {
   })
 })
 
-app.get('/todos/:todoId', (req, res) => {
-  console.log('-> GET /todos/:todoId (todoId : ' + req.params.todoId +')')
+app.get('/ressources/:id', (req, res) => {
+  console.log('-> GET /ressources/:id (id : ' + req.params.id +')')
   console.log('Database Open')
-  return db.get('SELECT * FROM todos WHERE rowid = ' + req.params.todoId)
+  return db.get('SELECT * FROM todos WHERE rowid = ' + req.params.id)
   .then(response => {
     if(!(response === undefined || response === null)) {
       res.json(response)
@@ -69,28 +69,28 @@ app.get('/todos/:todoId', (req, res) => {
   }).catch(err => console.log(err))
 })
 
-app.post('/todos', (req, res) => {
-  console.log('-> POST /todos')
+app.post('/ressources', (req, res) => {
+  console.log('-> POST /ressources')
   console.log('Database Open')
   if(req.body.message === undefined || req.body.message === null || req.body.completion === undefined || req.body.completion === null) {
     res.end('Envoie echouer')
   } else {
-    return db.run(`INSERT into todos VALUES ('${req.body.message}', '${req.body.completion}', '${strDate}', '${strDate}')`)
+    return db.run(`INSERT into todos VALUES ('${req.body.message}', '${req.body.completion}', '${strDate}', '${strDate}', '${req.body.userId}')`)
     .then(() => res.end('Donnée écrite'))
     .catch(err => console.log(err))
   }
 })
 
-app.delete('/todos/:todoId', (req, res) => {
-  console.log('-> DELETE /todos/:todoId (todoId : ' + req.params.todoId +')')
+app.delete('/ressources/:id', (req, res) => {
+  console.log('-> DELETE /ressources/:id (id : ' + req.params.id +')')
   console.log('Database open')
-  return db.run('DELETE FROM todos WHERE rowid = ' + req.params.todoId)
+  return db.run('DELETE FROM todos WHERE rowid = ' + req.params.id)
   .then(() => res.end('Donnée effacer'))
   .catch(err => console.log(err))
 })
 
-app.put('/todos/:todoId', (req, res) => {
-  console.log('-> PUT /todos/:todoId (todoId : ' + req.params.todoId +')')
+app.put('/ressources/:id', (req, res) => {
+  console.log('-> PUT /ressources/:id (id : ' + req.params.id +')')
   console.log('Database open')
   if(req.body.message === undefined || req.body.message === null || req.body.completion === undefined || req.body.completion === null) {
     res.end('Modification echouer')
@@ -101,9 +101,32 @@ app.put('/todos/:todoId', (req, res) => {
   }
 })
 
+app.get('/ressources/add', (req, res) => {
+  console.log('-> GET /ressources')
+  console.log('Database Open')
+})
+
+app.get('/ressources/:id/edit', (req, res) => {
+  console.log('-> GET /ressources')
+  console.log('Database Open')
+})
+
+app.get('/users/:id/todos', (req, res) => {
+  console.log('-> GET /ressources')
+  console.log('Database Open')
+})
+
+
 app.use((req, res) => {
- res.status(404)
- res.end('Not Found')
+  res.format({
+    'text/html': function() {
+      res.status(404)
+      res.send('Error 404 Not Found')
+    },
+    'application/json': function(){
+      res.send({status: '404 not found'})
+    }
+  })
 })
 
 /* route GET /todos => res.json() (SELECT tous les todoslist dans la base de données)
