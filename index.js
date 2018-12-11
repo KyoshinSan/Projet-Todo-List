@@ -6,15 +6,17 @@ const moment = require('moment')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 
-let strDate = moment().format('l')
+let strDate = moment().format('DD[/]MM[/]YYYY')
 
 app.set('views', './views')
 app.set('view engine', 'pug')
 
 db.open('todolist.db').then(() => {
   console.log('Database Ready')
-  return db.run('CREATE TABLE IF NOT EXISTS todos (message, completion, createdAt, updatedAt, userId)')
-  return db.run('CREATE TABLE IF NOT EXISTS users (firstname, lastname, username, password, email, createdAt, updatedAt)')
+  Promise.all([
+  db.run('CREATE TABLE IF NOT EXISTS todos (message, completion, createdAt, updatedAt, userId)'),
+  db.run('CREATE TABLE IF NOT EXISTS users (firstname, lastname, username, password, email, createdAt, updatedAt)')
+  ])
 }).then(() => {
   console.log('Tables Ready')
 }).catch(() => {
@@ -39,21 +41,36 @@ app.get('/', (req, res) => {
 app.get('/ressources', (req, res) => {
   console.log('-> GET /ressources')
   console.log('Database Open')
-  res.format({
+  let json =[]
+  return db.all('SELECT * FROM todos')
+  .then(response => {
+    json = response
+  })
+  .then(() => {
+    let array_todos = []
+    let array_tmp = []
+    let i = 0
+
+    json.forEach(function(element) {
+      for (let key in element) {
+        array_tmp.push(element[key])
+      }
+      array_todos.push(array_tmp)
+      array_tmp = []
+    })
+    console.log(array_todos)
+    res.format({
     'text/html': function() {
       res.render('main', {
-        title: 'Projet Todo List',
-        name: 'Todo  :',
-        content: 'oui'
+        content: array_todos
       })
     },
     'application/json': function(){
-      return db.all('SELECT * FROM todos')
-      .then(response => {
-        res.send(response)
-      }).catch(err => console.log(err))
+      res.send(json)
     }
   })
+  })
+  .catch(err => console.log(err))
 })
 
 app.get('/ressources/:id', (req, res) => {
@@ -72,13 +89,20 @@ app.get('/ressources/:id', (req, res) => {
 app.post('/ressources', (req, res) => {
   console.log('-> POST /ressources')
   console.log('Database Open')
-  if(req.body.message === undefined || req.body.message === null || req.body.completion === undefined || req.body.completion === null) {
-    res.end('Envoie echouer')
-  } else {
-    return db.run(`INSERT into todos VALUES ('${req.body.message}', '${req.body.completion}', '${strDate}', '${strDate}', '${req.body.userId}')`)
-    .then(() => res.end('Donnée écrite'))
-    .catch(err => console.log(err))
-  }
+  return db.run(`INSERT into todos VALUES ('${req.body.message}', '${req.body.completion}', '${strDate}', '${strDate}', '${req.body.userId}')`)
+  .then(() => {
+    res.format({
+    'text/html': function() {
+      res.render('main', {
+        content: array_todos
+      })
+    },
+    'application/json': function(){
+      res.send({message: 'success'})
+    }
+  })
+  })
+  .catch(err => console.log(err))
 })
 
 app.delete('/ressources/:id', (req, res) => {
