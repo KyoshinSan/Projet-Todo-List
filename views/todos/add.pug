@@ -1,0 +1,18 @@
+html
+  head
+    title Projet Node Js - Todo List
+  body
+    h1 Projet Node Js - Todo List
+    h4 Auteur : Jonathan DINH & Theo HERNANDEZ
+    p Ajouter une Todo
+    form(action='/todos', method='POST')
+      p
+        | Message :
+        input(name='message', type='text')
+        br
+        | Completion : 
+        input(name='completion', type='text')
+        br
+        | userId: 
+        input(name='userId', type='text')
+      input(value='Submit', type='submit')
