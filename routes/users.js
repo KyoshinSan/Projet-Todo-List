@@ -171,4 +171,35 @@ router.put('/:id', (req, res) => {
   }
 })
 
+router.get('/:id/todos', (req, res, next) => {
+  console.log('-> GET /users/:id/todos (id : ' + req.params.id +')')
+  console.log('Database Open')
+  let json = []
+  return db.get('SELECT * FROM todos WHERE userId = ' + req.params.id)
+  .then(response => {
+    if(!(response === undefined || response === null)) {
+      json = response
+	  } else {
+      next()
+    }
+  })
+  .then(() => {
+    res.format({
+      'text/html': function() {
+        res.render('./users/showtodos', {
+          content: json,
+          strId: 'Users de l\'id : ' + req.params.id
+        })
+      },
+      'application/json': function(){
+        res.send(json)
+      }
+    })
+  })
+  .catch((err) => {
+    return res.status(404).send(err)
+  })
+})
+
+
 module.exports = router

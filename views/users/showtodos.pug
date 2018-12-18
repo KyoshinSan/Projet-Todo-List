@@ -1,0 +1,17 @@
+html
+  head
+    title Projet Node Js - Todo List
+  body
+    h1 Projet Node Js - Todo List
+    h4 Auteur : Jonathan DINH & Theo HERNANDEZ
+    p= strId 
+    table
+      tr
+        th Message
+        th Progression
+        th Cree le
+        th Mise a jour le
+        th userId
+      tr
+        each word in content
+          td=word
