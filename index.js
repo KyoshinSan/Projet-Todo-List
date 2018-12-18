@@ -37,6 +37,9 @@ app.use(methodOverride('_method'))
 
 app.use('/todos', require('./routes/todos'))
 
+app.use('/users', require('./routes/users'))
+
+
 
 app.get('/ressources/add', (req, res) => {
   console.log('-> GET /ressources')
