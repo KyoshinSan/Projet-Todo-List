@@ -85,7 +85,7 @@ router.get('/:id', (req, res, next) => {
 router.post('/', (req, res) => {
   console.log('-> POST /todos')
   console.log('Database Open')
-  if(req.body.message === undefined || req.body.message === null || req.body.completion === undefined || req.body.completion === null || req.body.userId === undefined || req.body.userId === null) {
+  if(req.body.message === undefined || req.body.message === null || req.body.message.length < 1 || req.body.completion === undefined || req.body.completion === null || req.body.completion.length < 1 || req.body.userId === undefined || req.body.userId === null || req.body.userId.length < 1) {
     res.format({
         'text/html': function() {
           res.redirect('/users')
@@ -149,7 +149,7 @@ router.put('/:id', (req, res) => {
   console.log('-> PUT /todos/:id (id : ' + req.params.id +')')
   console.log('Database open')
   // verif req.body.message.length
-  if(req.body.message === undefined || req.body.message === null || req.body.completion === undefined || req.body.completion === null || req.body.userId === undefined || req.body.userId === null) {
+  if(req.body.message === undefined || req.body.message === null || req.body.message.length < 1 || req.body.completion === undefined || req.body.completion === null || req.body.completion.length < 1 || req.body.userId === undefined || req.body.userId === null || req.body.userId.length < 1) {
     res.format({
         'text/html': function() {
           res.redirect('/users')
