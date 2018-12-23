@@ -144,7 +144,14 @@ router.put('/:id', (req, res) => {
   // verif req.body.message.length
   if(req.body.firstname === undefined || req.body.firstname === null || req.body.lastname === undefined || req.body.lastname === null || req.body.username === undefined || req.body.username === null || 
   req.body.password === undefined || req.body.password === null || req.body.email === undefined || req.body.email === null) {
-    res.end('Modification echouer')
+    res.format({
+        'text/html': function() {
+          res.redirect('/users')
+        },
+        'application/json': function(){
+          res.send({message: 'failed'})
+        }
+      })
   } else {
     Promise.all([
     db.get('SELECT * FROM users WHERE rowid = ' + req.params.id),
