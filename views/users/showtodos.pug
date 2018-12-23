@@ -4,7 +4,7 @@ html
   body
     h1 Projet Node Js - Todo List
     h4 Auteur : Jonathan DINH & Theo HERNANDEZ
-    p= strId 
+    p Toutes les Todos de l'user #{id} : 
     table
       tr
         th Message
@@ -12,6 +12,10 @@ html
         th Cree le
         th Mise a jour le
         th userId
-      tr
-        each word in content
-          td=word
+      each word in content
+        tr
+          td=word[0]
+          td=word[1]
+          td=word[2]
+          td=word[3]
+          td=word[4]

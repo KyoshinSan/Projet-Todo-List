@@ -37,14 +37,6 @@ app.use('/todos', require('./routes/todos'))
 
 app.use('/users', require('./routes/users'))
 
-
-app.get('/ressources/:id/edit', (req, res) => {
-  console.log('-> GET /ressources')
-  console.log('Database Open')
-})
-
-
-
 app.use((req, res) => {
   res.format({
     'text/html': function() {

@@ -197,17 +197,29 @@ router.get('/:id/todos', (req, res, next) => {
     }
   })
   .then(() => {
-    res.format({
-      'text/html': function() {
-        res.render('./users/showtodos', {
-          content: json,
-          strId: 'Users de l\'id : ' + req.params.id
-        })
-      },
-      'application/json': function(){
-        res.send(json)
+    let array_todos = []
+    let array_tmp = []
+    let i = 0
+
+    json.forEach(function(element) {
+      for (let key in element) {
+        array_tmp.push(element[key])
       }
+      array_todos.push(array_tmp)
+      array_tmp = []
     })
+    console.log(array_todos)
+    res.format({
+    'text/html': function() {
+      res.render('./users/showtodos', {
+        content: array_todos,
+        id: req.params.id
+      })
+    },
+    'application/json': function(){
+      res.send(json)
+    }
+  })
   })
   .catch((err) => {
     return res.status(404).send(err)

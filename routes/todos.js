@@ -85,6 +85,16 @@ router.get('/:id', (req, res, next) => {
 router.post('/', (req, res) => {
   console.log('-> POST /todos')
   console.log('Database Open')
+  if(req.body.message === undefined || req.body.message === null || req.body.completion === undefined || req.body.completion === null || req.body.userId === undefined || req.body.userId === null) {
+    res.format({
+        'text/html': function() {
+          res.redirect('/users')
+        },
+        'application/json': function(){
+          res.send({message: 'failed'})
+        }
+      })
+  } else {
   return db.run(`INSERT into todos VALUES ('${req.body.message}', '${req.body.completion}', '${strDate}', '${strDate}', '${req.body.userId}')`)
   .then(() => {
     res.format({
@@ -99,6 +109,7 @@ router.post('/', (req, res) => {
   .catch((err) => {
     return res.status(404).send(err)
   })
+  }
 })
 
 router.delete('/:id', (req, res) => {
