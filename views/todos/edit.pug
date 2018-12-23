@@ -8,11 +8,11 @@ html
     form(action='/todos/' + id + '?_method=PUT', method='POST')
       p
         | Message :
-        input(name='message', type='text')
+        input(name='message', type='text', required)
         br
         | Completion : 
-        input(name='completion', type='text')
+        input(name='completion', type='text', required)
         br
         | userId: 
-        input(name='userId', type='text')
+        input(name='userId', type='text', required)
       input(value='Submit', type='submit')
