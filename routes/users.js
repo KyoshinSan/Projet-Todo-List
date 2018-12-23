@@ -49,9 +49,9 @@ router.get('/add', (req, res) => {
 })
 
 router.get('/:id/edit', (req, res) => {
-  console.log('-> GET /users/add')
+  console.log('-> GET /users/:id/edit (id : ' + req.params.id +')')
   console.log('Database Open')
-  res.render('./users/')
+res.render('./users/edit', {id: req.params.id})
 })
 
 router.get('/:id', (req, res, next) => {
@@ -140,6 +140,7 @@ router.delete('/:id', (req, res) => {
 router.put('/:id', (req, res) => {
   console.log('-> PUT /users/:id (id : ' + req.params.id +')')
   console.log('Database open')
+  let password_hashed = bcrypt.hashSync(req.body.password, saltRounds)
   // verif req.body.message.length
   if(req.body.firstname === undefined || req.body.firstname === null || req.body.lastname === undefined || req.body.lastname === null || req.body.username === undefined || req.body.username === null || 
   req.body.password === undefined || req.body.password === null || req.body.email === undefined || req.body.email === null) {
@@ -147,7 +148,7 @@ router.put('/:id', (req, res) => {
   } else {
     Promise.all([
     db.get('SELECT * FROM users WHERE rowid = ' + req.params.id),
-    db.run(`UPDATE users SET firstname = '${req.body.firstname}', lastname = '${req.body.lastname}', username = '${req.body.username}', password = '${req.body.password}', email = '${req.body.email}', updatedAt = '${strDate}' WHERE rowid = ${req.params.id}`)
+    db.run(`UPDATE users SET firstname = '${req.body.firstname}', lastname = '${req.body.lastname}', username = '${req.body.username}', password = '${password_hashed}', email = '${req.body.email}', updatedAt = '${strDate}' WHERE rowid = ${req.params.id}`)
   ]).then((response) => {
   if (response[0] === undefined || response[0] === null) {
     res.format({

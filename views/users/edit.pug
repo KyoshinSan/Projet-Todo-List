@@ -5,8 +5,8 @@ html
     h1 Projet Node Js - Todo List
     h4 Auteur : Jonathan DINH & Theo HERNANDEZ
     p Ajouter un User
-    form(action='"/users/?_method=PUT"', method='POST')
-	  p
+    form(action='/users/' + id + '?_method=PUT', method='POST')
+      p 
         | Firstname :
         input(name='firstname', type='text')
         br
