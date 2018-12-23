@@ -88,6 +88,17 @@ router.post('/', (req, res) => {
   console.log('-> POST /users')
   console.log('Database Open')
   let password_hashed = bcrypt.hashSync(req.body.password, saltRounds)
+  if(req.body.firstname === undefined || req.body.firstname === null || req.body.lastname === undefined || req.body.lastname === null || req.body.username === undefined || req.body.username === null || 
+  req.body.password === undefined || req.body.password === null || req.body.email === undefined || req.body.email === null) {
+    res.format({
+        'text/html': function() {
+          res.redirect('/users')
+        },
+        'application/json': function(){
+          res.send({message: 'failed'})
+        }
+      })
+	  else { 
   return db.run(`INSERT into users VALUES ('${req.body.firstname}', '${req.body.lastname}', '${req.body.username}', '${password_hashed}', '${req.body.email}', '${strDate}', '${strDate}')`)
   .then(() => {
     res.format({
@@ -103,6 +114,41 @@ router.post('/', (req, res) => {
     return res.status(404).send(err)
   })
 })
+
+router.delete('/:id', (req, res) => {
+  console.log('-> DELETE /users/:id (id : ' + req.params.id +')')
+  console.log('Database open')
+  Promise.all([
+    db.get('SELECT * FROM users WHERE rowid = ' + req.params.id),
+    db.run('DELETE FROM users WHERE rowid = ' + req.params.id)
+  ])
+  .then((response) => {
+    if (response[0] === undefined || response[0] === null) {
+      res.format({
+        'text/html': function() {
+          res.redirect('/users')
+        },
+        'application/json': function(){
+          res.send({message: 'failed'})
+        }
+      })
+    } else {
+      res.format({
+        'text/html': function() {
+          res.redirect('/users')
+        },
+        'application/json': function(){
+          res.send({message: 'success'})
+        }
+      })
+    }
+  })
+  .catch((err) => {
+    return res.status(404).send(err)
+  })
+  }
+})
+
 
 router.delete('/:id', (req, res) => {
   console.log('-> DELETE /users/:id (id : ' + req.params.id +')')
