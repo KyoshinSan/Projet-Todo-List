@@ -88,8 +88,8 @@ router.post('/', (req, res) => {
   console.log('-> POST /users')
   console.log('Database Open')
   let password_hashed = bcrypt.hashSync(req.body.password, saltRounds)
-  if(req.body.firstname === undefined || req.body.firstname === null || req.body.lastname === undefined || req.body.lastname === null || req.body.username === undefined || req.body.username === null || 
-  req.body.password === undefined || req.body.password === null || req.body.email === undefined || req.body.email === null) {
+  if(req.body.firstname === undefined || req.body.firstname === null || req.body.firstname.length < 1 || req.body.lastname === undefined || req.body.lastname === null || req.body.lastname.length < 1 || req.body.username === undefined || req.body.username === null || req.body.username.length < 1 || 
+  req.body.password === undefined || req.body.password === null || req.body.password.length < 1 || req.body.email === undefined || req.body.email === null || req.body.email.length < 1 ) {
     res.format({
         'text/html': function() {
           res.redirect('/users')
@@ -154,8 +154,8 @@ router.put('/:id', (req, res) => {
   console.log('Database open')
   let password_hashed = bcrypt.hashSync(req.body.password, saltRounds)
   // verif req.body.message.length
-  if(req.body.firstname === undefined || req.body.firstname === null || req.body.lastname === undefined || req.body.lastname === null || req.body.username === undefined || req.body.username === null || 
-  req.body.password === undefined || req.body.password === null || req.body.email === undefined || req.body.email === null) {
+  if(req.body.firstname === undefined || req.body.firstname === null || req.body.firstname.length < 1 || req.body.lastname === undefined || req.body.lastname === null || req.body.lastname.length < 1 || req.body.username === undefined || req.body.username === null || req.body.username.length < 1 || 
+  req.body.password === undefined || req.body.password === null || req.body.password.length < 1 || req.body.email === undefined || req.body.email === null || req.body.email.length < 1 ) {
     res.format({
         'text/html': function() {
           res.redirect('/users')
