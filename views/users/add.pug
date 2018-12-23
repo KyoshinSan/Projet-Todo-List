@@ -8,17 +8,17 @@ html
     form(action='/users', method='POST')
       p
         | Firstname :
-        input(name='firstname', type='text')
+        input(name='firstname', type='text', required)
         br
         | Lastname : 
-        input(name='lastname', type='text')
+        input(name='lastname', type='text', required)
         br
         | Username :
-        input(name='username', type='text')
+        input(name='username', type='text', required)
         br
         | Password : 
-        input(name='password', type='text')
+        input(name='password', type='text', required)
         br
         | Email : 
-        input(name='email', type='text')
+        input(name='email', type='text', required)
       input(value='Submit', type='submit')
