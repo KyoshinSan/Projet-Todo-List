@@ -3,8 +3,6 @@ const app = express()
 const PORT = process.env.PORT || 8080
 const db = require('sqlite')
 const moment = require('moment')
-const bcrypt = require('bcrypt')
-const saltRounds = 10
 const methodOverride = require('method-override')
 
 let strDate = moment().format('DD[/]MM[/]YYYY')
@@ -39,12 +37,6 @@ app.use('/todos', require('./routes/todos'))
 
 app.use('/users', require('./routes/users'))
 
-
-
-app.get('/ressources/add', (req, res) => {
-  console.log('-> GET /ressources')
-  console.log('Database Open')
-})
 
 app.get('/ressources/:id/edit', (req, res) => {
   console.log('-> GET /ressources')

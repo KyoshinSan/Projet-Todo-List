@@ -5,7 +5,7 @@ html
     h1 Projet Node Js - Todo List
     h4 Auteur : Jonathan DINH & Theo HERNANDEZ
     p Ajouter une Todo
-    form(action='"/todos/?_method=PUT"', method='POST')
+    form(action='/todos/' + id + '?_method=PUT', method='POST')
       p
         | Message :
         input(name='message', type='text')

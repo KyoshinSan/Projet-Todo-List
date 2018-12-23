@@ -49,7 +49,7 @@ router.get('/add', (req, res) => {
 router.get('/:id/edit', (req, res) => {
   console.log('-> GET /todos/add')
   console.log('Database Open')
-  res.render('./todos/')
+  res.render('./todos/edit', {id: req.params.id})
 })
 
 router.get('/:id', (req, res, next) => {
