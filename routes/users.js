@@ -175,10 +175,12 @@ router.get('/:id/todos', (req, res, next) => {
   console.log('-> GET /users/:id/todos (id : ' + req.params.id +')')
   console.log('Database Open')
   let json = []
-  return db.get('SELECT * FROM todos WHERE userId = ' + req.params.id)
+  return db.all(`SELECT * FROM todos WHERE userId = '${req.params.id}'`)
   .then(response => {
+	  console.log(response)
     if(!(response === undefined || response === null)) {
       json = response
+	  console.log(json)
 	  } else {
       next()
     }
