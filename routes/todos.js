@@ -138,8 +138,15 @@ router.put('/:id', (req, res) => {
   console.log('-> PUT /todos/:id (id : ' + req.params.id +')')
   console.log('Database open')
   // verif req.body.message.length
-  if(req.body.message === undefined || req.body.message === null || req.body.completion === undefined || req.body.completion === null) {
-    res.end('Modification echouer')
+  if(req.body.message === undefined || req.body.message === null || req.body.completion === undefined || req.body.completion === null || req.body.userId === undefined || req.body.userId === null) {
+    res.format({
+        'text/html': function() {
+          res.redirect('/users')
+        },
+        'application/json': function(){
+          res.send({message: 'failed'})
+        }
+      })
   } else {
     Promise.all([
     db.get('SELECT * FROM todos WHERE rowid = ' + req.params.id),
