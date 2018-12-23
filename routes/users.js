@@ -1,6 +1,8 @@
 const router = require('express').Router()
 const db = require('sqlite')
 const moment = require('moment')
+const bcrypt = require('bcrypt')
+const saltRounds = 10
 let strDate = moment().format('DD[/]MM[/]YYYY')
 
 router.get('/', (req, res) => {
@@ -85,7 +87,8 @@ router.get('/:id', (req, res, next) => {
 router.post('/', (req, res) => {
   console.log('-> POST /users')
   console.log('Database Open')
-  return db.run(`INSERT into users VALUES ('${req.body.firstname}', '${req.body.lastname}', '${req.body.username}', '${req.body.password}', '${req.body.email}', '${strDate}', '${strDate}')`)
+  let password_hashed = bcrypt.hashSync(req.body.password, saltRounds)
+  return db.run(`INSERT into users VALUES ('${req.body.firstname}', '${req.body.lastname}', '${req.body.username}', '${password_hashed}', '${req.body.email}', '${strDate}', '${strDate}')`)
   .then(() => {
     res.format({
       'text/html': function() {

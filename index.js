@@ -51,10 +51,6 @@ app.get('/ressources/:id/edit', (req, res) => {
   console.log('Database Open')
 })
 
-app.get('/users/:id/todos', (req, res) => {
-  console.log('-> GET /ressources')
-  console.log('Database Open')
-})
 
 
 app.use((req, res) => {
