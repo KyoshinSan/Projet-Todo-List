@@ -1,11 +1,11 @@
 #main {
   width: 65%;
-  height: 100%;
   margin: auto;
   padding: 10px 20px;
   border-left-style: groove;
   border-right-style: groove;
   background-color: white;
+  overflow-x: auto;
 }
 
 #form {
