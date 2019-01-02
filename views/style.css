@@ -1,5 +1,6 @@
 #main {
-  width: 65%;
+  width: 80%;
+  min-height: 100%;
   margin: auto;
   padding: 10px 20px;
   border-left-style: groove;
