@@ -22,15 +22,12 @@ db.open('todolist.db').then(() => {
   console.log('Error')
 })
 
-
 app.listen(PORT, () => {
   console.log('Serveur sur port : ', PORT)
 })
 
 app.use(express.json())
-app.use(express.urlencoded({
- extended: true
-}))
+app.use(express.urlencoded({extended: true}))
 app.use(methodOverride('_method'))
 
 app.use('/todos', require('./routes/todos'))
@@ -48,12 +45,3 @@ app.use((req, res) => {
     }
   })
 })
-
-/* route GET /todos => res.json() (SELECT tous les todoslist dans la base de données)
-db.all(une requete SQL) => SELECT *
-db.get(une requete SQL) => 1 truc
-db.run(une requete SQL) => pour changer les info dans la base
-
-date.now() pour la date
-
-route POST /todos => insert d'une todos liste */

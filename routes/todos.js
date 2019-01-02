@@ -4,14 +4,13 @@ const moment = require('moment')
 let strDate = moment().format('DD[/]MM[/]YYYY')
 
 router.get('/', (req, res) => {
-  console.log('-> GET /todos')
-  console.log('Database Open')
   let json = []
   return db.all('SELECT * FROM todos')
   .then(response => {
     json = response
   })
   .then(() => {
+    //la variable array_todos permet de stocker les éléments du json pour le envoyer sur pug sous forme d'un tableau a 2 dimension pour exploiter les données plus facilement
     let array_todos = []
     let array_tmp = []
     let i = 0
@@ -41,24 +40,26 @@ router.get('/', (req, res) => {
 })
 
 router.get('/add', (req, res) => {
-  console.log('-> GET /todos/add')
-  console.log('Database Open')
   res.render('./todos/add')
 })
 
-router.get('/:id/edit', (req, res) => {
-  console.log('-> GET /todos/add')
-  console.log('Database Open')
+router.get('/:id/edit', (req, res, next) => {
+  // on vérifie si l'id est bien un nombre
+  if (isNaN(Number(req.params.id))) {
+    next()
+  }
   res.render('./todos/edit', {id: req.params.id})
 })
 
 router.get('/:id', (req, res, next) => {
-  console.log('-> GET /todos/:id (id : ' + req.params.id +')')
-  console.log('Database Open')
+  // on vérifie si l'id est bien un nombre
+  if (isNaN(Number(req.params.id))) {
+    next()
+  }
   let json = []
   return db.get('SELECT * FROM todos WHERE rowid = ' + req.params.id)
+  //on vérifie si la todos existe
   .then(response => {
-    console.log(response)
     if(!(response === undefined || response === null)) {
       json = response
     } else {
@@ -84,8 +85,7 @@ router.get('/:id', (req, res, next) => {
 })
 
 router.post('/', (req, res) => {
-  console.log('-> POST /todos')
-  console.log('Database Open')
+  //on vérifie si les variables existent/sont remplies
   if(req.body.message === undefined || req.body.message === null || req.body.message.length < 1 || req.body.completion === undefined || req.body.completion === null || req.body.completion.length < 1 || req.body.userId === undefined || req.body.userId === null || req.body.userId.length < 1) {
     res.format({
         'text/html': function() {
@@ -113,13 +113,16 @@ router.post('/', (req, res) => {
   }
 })
 
-router.delete('/:id', (req, res) => {
-  console.log('-> DELETE /todos/:id (id : ' + req.params.id +')')
-  console.log('Database open')
+router.delete('/:id', (req, res, next) => {
+  // on vérifie si l'id est bien un nombre
+  if (isNaN(Number(req.params.id))) {
+    next()
+  }
   Promise.all([
     db.get('SELECT * FROM todos WHERE rowid = ' + req.params.id),
     db.run('DELETE FROM todos WHERE rowid = ' + req.params.id)
   ])
+  // on vérifie si la todos existe
   .then((response) => {
     if (response[0] === undefined || response[0] === null) {
       res.format({
@@ -146,14 +149,15 @@ router.delete('/:id', (req, res) => {
   })
 })
 
-router.put('/:id', (req, res) => {
-  console.log('-> PUT /todos/:id (id : ' + req.params.id +')')
-  console.log('Database open')
-  // verif req.body.message.length
-  if(req.body.message === undefined || req.body.message === null || req.body.message.length < 1 || req.body.completion === undefined || req.body.completion === null || req.body.completion.length < 1 || req.body.userId === undefined || req.body.userId === null || req.body.userId.length < 1) {
+router.put('/:id', (req, res, next) => {
+  // on vérifie si l'id est bien un nombre
+  if (isNaN(Number(req.params.id))) {
+    next()
+  }
+  if(req.body.message === undefined || req.body.message === null || req.body.message.length < 1 || req.body.completion === undefined || req.body.completion === null || req.body.completion.length < 1) {
     res.format({
         'text/html': function() {
-          res.redirect('/users')
+          res.redirect('/todos')
         },
         'application/json': function(){
           res.send({message: 'failed'})

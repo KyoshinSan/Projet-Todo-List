@@ -6,14 +6,13 @@ const saltRounds = 10
 let strDate = moment().format('DD[/]MM[/]YYYY')
 
 router.get('/', (req, res) => {
-  console.log('-> GET /users')
-  console.log('Database Open')
   let json = []
   return db.all('SELECT * FROM users')
   .then(response => {
     json = response
   })
   .then(() => {
+    //la variable array_todos permet de stocker les éléments du json pour le envoyer sur pug sous forme d'un tableau a 2 dimension pour exploiter les données plus facilement
     let array_users = []
     let array_tmp = []
     let i = 0
@@ -43,20 +42,71 @@ router.get('/', (req, res) => {
 })
 
 router.get('/add', (req, res) => {
-  console.log('-> GET /users/add')
-  console.log('Database Open')
   res.render('./users/add')
 })
 
-router.get('/:id/edit', (req, res) => {
-  console.log('-> GET /users/:id/edit (id : ' + req.params.id +')')
-  console.log('Database Open')
-res.render('./users/edit', {id: req.params.id})
+router.get('/:id/edit', (req, res, next) => {
+  // on vérifie si l'id est bien un nombre
+  if (isNaN(Number(req.params.id))) {
+    next()
+  }
+  res.render('./users/edit', {id: req.params.id})
+})
+
+router.get('/:id/todos', (req, res, next) => {
+  // on vérifie si l'id est bien un nombre
+  if (isNaN(Number(req.params.id))) {
+    next()
+  }
+  let json = []
+  Promise.all([
+    db.get(`SELECT userId FROM todos WHERE userId = '${req.params.id}'`),
+    db.all(`SELECT * FROM todos WHERE userId = '${req.params.id}'`)
+  ])
+  //on vérifie si l'userId existe
+  .then(response => {
+    console.log(response)
+    if(!(response[0] === undefined || response[0] === null)) {
+        json = response[1]
+      } else {
+        next()
+      }
+    })
+    .then(() => {
+      let array_todos = []
+      let array_tmp = []
+      let i = 0
+
+      json.forEach(function(element) {
+        for (let key in element) {
+          array_tmp.push(element[key])
+        }
+        array_todos.push(array_tmp)
+        array_tmp = []
+      })
+      console.log(array_todos)
+      res.format({
+      'text/html': function() {
+        res.render('./users/showtodos', {
+          content: array_todos,
+          id: req.params.id
+        })
+      },
+      'application/json': function(){
+        res.send(json)
+      }
+    })
+  })
+  .catch((err) => {
+    return res.status(404).send(err)
+  })
 })
 
 router.get('/:id', (req, res, next) => {
-  console.log('-> GET /users/:id (id : ' + req.params.id +')')
-  console.log('Database Open')
+  // on vérifie si l'id est bien un nombre
+  if (isNaN(Number(req.params.id))) {
+    next()
+  }
   let json = []
   return db.get('SELECT * FROM users WHERE rowid = ' + req.params.id)
   .then(response => {
@@ -85,8 +135,7 @@ router.get('/:id', (req, res, next) => {
 })
 
 router.post('/', (req, res) => {
-  console.log('-> POST /users')
-  console.log('Database Open')
+  // on vérifie si l'id est bien un nombre
   let password_hashed = bcrypt.hashSync(req.body.password, saltRounds)
   if(req.body.firstname === undefined || req.body.firstname === null || req.body.firstname.length < 1 || req.body.lastname === undefined || req.body.lastname === null || req.body.lastname.length < 1 || req.body.username === undefined || req.body.username === null || req.body.username.length < 1 || 
   req.body.password === undefined || req.body.password === null || req.body.password.length < 1 || req.body.email === undefined || req.body.email === null || req.body.email.length < 1 ) {
@@ -116,9 +165,11 @@ router.post('/', (req, res) => {
   }
 })
 
-router.delete('/:id', (req, res) => {
-  console.log('-> DELETE /users/:id (id : ' + req.params.id +')')
-  console.log('Database open')
+router.delete('/:id', (req, res, next) => {
+  // on vérifie si l'id est bien un nombre
+  if (isNaN(Number(req.params.id))) {
+    next()
+  }
   Promise.all([
     db.get('SELECT * FROM users WHERE rowid = ' + req.params.id),
     db.run('DELETE FROM users WHERE rowid = ' + req.params.id)
@@ -149,11 +200,13 @@ router.delete('/:id', (req, res) => {
   })
 })
 
-router.put('/:id', (req, res) => {
-  console.log('-> PUT /users/:id (id : ' + req.params.id +')')
-  console.log('Database open')
+router.put('/:id', (req, res, next) => {
+  // on vérifie si l'id est bien un nombre
+  if (isNaN(Number(req.params.id))) {
+    next()
+  }
   let password_hashed = bcrypt.hashSync(req.body.password, saltRounds)
-  // verif req.body.message.length
+  //on vérifie si les variables existent/sont remplies
   if(req.body.firstname === undefined || req.body.firstname === null || req.body.firstname.length < 1 || req.body.lastname === undefined || req.body.lastname === null || req.body.lastname.length < 1 || req.body.username === undefined || req.body.username === null || req.body.username.length < 1 || 
   req.body.password === undefined || req.body.password === null || req.body.password.length < 1 || req.body.email === undefined || req.body.email === null || req.body.email.length < 1 ) {
     res.format({
@@ -192,50 +245,6 @@ router.put('/:id', (req, res) => {
       return res.status(404).send(err)
     })
   }
-})
-
-router.get('/:id/todos', (req, res, next) => {
-  console.log('-> GET /users/:id/todos (id : ' + req.params.id +')')
-  console.log('Database Open')
-  let json = []
-  return db.all(`SELECT * FROM todos WHERE userId = '${req.params.id}'`)
-  .then(response => {
-	  console.log(response)
-    if(!(response === undefined || response === null)) {
-      json = response
-	  console.log(json)
-	  } else {
-      next()
-    }
-  })
-  .then(() => {
-    let array_todos = []
-    let array_tmp = []
-    let i = 0
-
-    json.forEach(function(element) {
-      for (let key in element) {
-        array_tmp.push(element[key])
-      }
-      array_todos.push(array_tmp)
-      array_tmp = []
-    })
-    console.log(array_todos)
-    res.format({
-    'text/html': function() {
-      res.render('./users/showtodos', {
-        content: array_todos,
-        id: req.params.id
-      })
-    },
-    'application/json': function(){
-      res.send(json)
-    }
-  })
-  })
-  .catch((err) => {
-    return res.status(404).send(err)
-  })
 })
 
 
