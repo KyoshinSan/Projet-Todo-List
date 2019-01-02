@@ -58,6 +58,7 @@ router.get('/:id', (req, res, next) => {
   let json = []
   return db.get('SELECT * FROM todos WHERE rowid = ' + req.params.id)
   .then(response => {
+    console.log(response)
     if(!(response === undefined || response === null)) {
       json = response
     } else {
@@ -88,7 +89,7 @@ router.post('/', (req, res) => {
   if(req.body.message === undefined || req.body.message === null || req.body.message.length < 1 || req.body.completion === undefined || req.body.completion === null || req.body.completion.length < 1 || req.body.userId === undefined || req.body.userId === null || req.body.userId.length < 1) {
     res.format({
         'text/html': function() {
-          res.redirect('/users')
+          res.redirect('/todos')
         },
         'application/json': function(){
           res.send({message: 'failed'})

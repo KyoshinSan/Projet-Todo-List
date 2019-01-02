@@ -1,24 +1,28 @@
 html
   head
     title Projet Node Js - Todo List
+    style
+      include ../style.css
   body
-    h1 Projet Node Js - Todo List
-    h4 Auteur : Jonathan DINH & Theo HERNANDEZ
-    p Ajouter un User
-    form(action='/users/' + id + '?_method=PUT', method='POST')
-      p 
-        | Firstname :
-        input(name='firstname', type='text', required)
-        br
-        | Lastname : 
-        input(name='lastname', type='text', required)
-        br
-        | Username :
-        input(name='username', type='text', required)
-        br
-        | Password : 
-        input(name='password', type='text', required)
-        br
-        | Email : 
-        input(name='email', type='text', required)
-      input(value='Submit', type='submit')
+    div#main
+      h1 Projet Node Js - Todo List
+      h4 Auteur : Jonathan DINH & Theo HERNANDEZ
+      p Ajouter un User
+      div#form
+        form(action='/users/' + id + '?_method=PUT', method='POST')
+          p 
+            | Firstname :
+            input(name='firstname', type='text', required)
+            br
+            | Lastname : 
+            input(name='lastname', type='text', required)
+            br
+            | Username :
+            input(name='username', type='text', required)
+            br
+            | Password : 
+            input(name='password', type='text', required)
+            br
+            | Email : 
+            input(name='email', type='email', required)
+          input(value='Submit', type='submit')

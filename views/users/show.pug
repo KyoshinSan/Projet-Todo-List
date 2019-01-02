@@ -1,19 +1,22 @@
 html
   head
     title Projet Node Js - Todo List
+    style
+      include ../style.css
   body
-    h1 Projet Node Js - Todo List
-    h4 Auteur : Jonathan DINH & Theo HERNANDEZ
-    p= strId 
-    table
-      tr
-        th Firstname
-        th Lastname
-        th Username
-        th Password
-        th Email
-        th Cree le
-        th Modifier le
-      tr
-        each word in content
-          td=word
+    div#main
+      h1 Projet Node Js - Todo List
+      h4 Auteur : Jonathan DINH & Theo HERNANDEZ
+      p= strId 
+      table
+        tr
+          th Firstname
+          th Lastname
+          th Username
+          th Password
+          th Email
+          th Cree le
+          th Modifier le
+        tr
+          each word in content
+            td=word

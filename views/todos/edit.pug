@@ -1,18 +1,25 @@
 html
   head
     title Projet Node Js - Todo List
+    style
+      include ../style.css
   body
-    h1 Projet Node Js - Todo List
-    h4 Auteur : Jonathan DINH & Theo HERNANDEZ
-    p Ajouter une Todo
-    form(action='/todos/' + id + '?_method=PUT', method='POST')
-      p
-        | Message :
-        input(name='message', type='text', required)
-        br
-        | Completion : 
-        input(name='completion', type='text', required)
-        br
-        | userId: 
-        input(name='userId', type='text', required)
-      input(value='Submit', type='submit')
+    div#main
+      h1 Projet Node Js - Todo List
+      h4 Auteur : Jonathan DINH & Theo HERNANDEZ
+      p Editer une Todo
+      div#form
+        form(action='/todos/' + id + '?_method=PUT', method='POST')
+          p
+            | Message :
+            input(name='message', type='text', required)
+            br
+            | Completion : 
+            select(name='completion')
+              option(value='To Do') To Do
+              option(value='In Progress') In progress
+              option(value='Done') Done
+            br
+            | userId: 
+            input(name='userId', type='number', required)
+          input(value='Submit', type='submit')
